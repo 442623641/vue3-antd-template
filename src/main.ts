@@ -1,6 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { setupAntd } from './plugins'
 import router from './router'
-import store from './store'
+import IonModal from './plugins/modal'
+import './permission'
+import { setupStore } from './store'
 
-createApp(App).use(store).use(router).mount('#app')
+const app = createApp(App)
+
+setupAntd(app)
+setupStore(app)
+
+app.use(router)
+    .use(IonModal)
+    .mount('#app')

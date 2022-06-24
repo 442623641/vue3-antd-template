@@ -1,25 +1,47 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHashHistory } from "vue-router"
+import Layout from '@/layout/index.vue'
+import type { RouteRecordRaw } from 'vue-router'
+import { homeRouting } from "@/pages/home/home.routing"
+import { aboutRouting } from "@/pages/about/about.routing"
 
-const routes: Array<RouteRecordRaw> = [
+export const constantRoutes: RouteRecordRaw[] = [
+  homeRouting,
+  aboutRouting,
   {
     path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: Layout,
+    redirect: '/home'
   }
+]
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+*/
+export const asyncRoutes: RouteRecordRaw[] = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+  // process.env.BASE_URL
+  history: createWebHashHistory(''),
+  scrollBehavior: (to: any, from: any, savedPosition: any) => {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
+  routes: constantRoutes,
+});
+
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  router.getRoutes().forEach((route) => {
+    const { path } = route;
+    // if (path && !constantRoutes.some((n) => n === path)) {
+    //   router.hasRoute(path) && router.removeRoute(path);
+    // }
+  });
+}
 
 export default router
